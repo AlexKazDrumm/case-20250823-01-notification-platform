@@ -1,0 +1,71 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-notification_hub}
+      POSTGRES_USER: ${POSTGRES_USER:-notification_hub}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-notification_hub}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+
+  web:
+    build: .
+    command: bash -lc "python manage.py makemigrations && python manage.py migrate && gunicorn app.wsgi:application --bind 0.0.0.0:8000"
+    env_file:
+      - .env
+    volumes:
+      - .:/code
+      - staticfiles:/code/staticfiles
+      - media:/code/media
+    depends_on:
+      - db
+      - redis
+    ports:
+      - "8000:8000"
+
+  worker:
+    build: .
+    command: bash -lc "celery -A app worker -l info"
+    env_file:
+      - .env
+    volumes:
+      - .:/code
+    depends_on:
+      - db
+      - redis
+
+  beat:
+    build: .
+    command: bash -lc "celery -A app beat -l info --pidfile="
+    env_file:
+      - .env
+    volumes:
+      - .:/code
+    depends_on:
+      - db
+      - redis
+
+  nginx:
+    image: nginx:1.25-alpine
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - staticfiles:/static:ro
+      - media:/media:ro
+    ports:
+      - "80:80"
+    depends_on:
+      - web
+
+volumes:
+  pgdata:
+  staticfiles:
+  media:

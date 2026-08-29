@@ -1,0 +1,34 @@
+{% extends "dashboard/base.html" %}
+{% block content %}
+<h2>Create notifications</h2>
+<form method="post">
+  {% csrf_token %}
+  <div class="grid">
+    <div>
+      <label>Subject {{ form.subject }}</label>
+      <label>Message {{ form.message }}</label>
+    </div>
+    <div>
+      <details open>
+        <summary>Выбрать пользователей из базы</summary>
+        {{ form.users }}
+      </details>
+      <details>
+        <summary>Ввести вручную</summary>
+        <label>Email {{ form.to_email }}</label>
+        <label>Phone {{ form.to_phone }}</label>
+        <label>Telegram chat id {{ form.to_telegram }}</label>
+      </details>
+      <label>Channels order</label>
+      {{ form.channels_order }}
+      <label>Mode {{ form.mode }}</label>
+      <label>Channel (if specific) {{ form.channel }}</label>
+    </div>
+  </div>
+  <button type="submit">Create & Send</button>
+</form>
+
+{% if form.errors %}
+  <article class="contrast"><pre>{{ form.errors }}</pre></article>
+{% endif %}
+{% endblock %}

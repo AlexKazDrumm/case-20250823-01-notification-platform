@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>Notifications Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <style>
+    .container { max-width: 1100px; }
+    .badge { padding:.15rem .45rem; border-radius:.35rem; font-size:.8rem; }
+    .badge.SENT{background:#16a34a;color:#fff}
+    .badge.PENDING{background:#f59e0b;color:#000}
+    .badge.FAILED{background:#dc2626;color:#fff}
+    .attempt-success{color:#16a34a}
+    .attempt-failed{color:#dc2626}
+  </style>
+</head>
+<body>
+  <nav class="container">
+    <ul><li><strong>Notification Hub — Notifications</strong></li></ul>
+    <ul>
+      <li><a href="{% url 'dashboard:notifications_list' %}">Notifications</a></li>
+      <li><a href="{% url 'dashboard:notification_create' %}">Create</a></li>
+      <li><a href="{% url 'dashboard:users_list' %}">Users</a></li>
+      <li><a href="/admin/">Admin</a></li>
+      {% if request.user.is_authenticated %}
+        <li>Hi, {{ request.user.username }}</li>
+        <li><a href="{% url 'logout' %}">Logout</a></li>
+      {% else %}
+        <li><a href="{% url 'login' %}">Login</a></li>
+      {% endif %}
+    </ul>
+  </nav>
+  <main class="container">
+    {% for m in messages %}<article class="contrast">{{ m }}</article>{% endfor %}
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

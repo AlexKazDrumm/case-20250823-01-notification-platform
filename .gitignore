@@ -1,0 +1,71 @@
+# OS & editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+.env
+.env.*
+venv/
+.venv/
+env/
+
+# Django
+db.sqlite3
+*.sqlite3
+/media/
+staticfiles/
+local_settings.py
+
+# Logs & runfiles
+*.log
+logs/
+*.pid
+celerybeat-schedule
+celerybeat.pid
+celeryd.pid
+
+# Build / dist
+build/
+dist/
+.eggs/
+*.egg-info/
+
+# Tests / coverage / type checking
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Office temp files
+~$*
+
+# Migrations
+accounts/migrations
+notifications/migrations
+
+# Local secrets and portfolio identity
+.env
+.env.*
+!.env.example
+!.env.*.example
+LOCAL_ORIGIN.txt
+
+# Local development artifacts
+.idea/
+.vscode/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+node_modules/

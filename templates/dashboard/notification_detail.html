@@ -1,0 +1,49 @@
+{% extends "dashboard/base.html" %}
+{% block content %}
+<h2>Notification #{{ notif.id }}</h2>
+<p><b>Subject:</b> {{ notif.subject|default:"—" }}</p>
+<p><b>Message:</b> <pre>{{ notif.message }}</pre></p>
+<p><b>To:</b>
+  {% if notif.to_email %}📧 {{ notif.to_email }} {% endif %}
+  {% if notif.to_phone %}📱 {{ notif.to_phone }} {% endif %}
+  {% if notif.to_telegram %}<i class="bi bi-telegram"></i> {{ notif.to_telegram }} {% endif %}
+</p>
+<p><b>Channels:</b> {{ notif.channels_order|join:", " }}</p>
+<p><b>Status:</b> <span class="badge {{ notif.status }}">{{ notif.status }}</span></p>
+
+<h3>Attempts</h3>
+<table role="grid">
+  <thead><tr><th>#</th><th>Channel</th><th>Status</th><th>Error</th><th>Created</th></tr></thead>
+  <tbody>
+    {% for a in attempts %}
+      <tr>
+        <td>{{ a.attempt_no }}</td>
+        <td>{{ a.channel }}</td>
+        <td class="{% if a.status == 'SUCCESS' %}attempt-success{% elif a.status == 'FAILED' %}attempt-failed{% endif %}">{{ a.status }}</td>
+        <td>{{ a.error|default:"" }}</td>
+        <td>{{ a.created_at }}</td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="5">Нет попыток</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% if request.user.is_staff %}
+<h3>Send</h3>
+<form method="post" action="{% url 'dashboard:notification_resend' notif.id %}">
+  {% csrf_token %}
+  <fieldset>
+    <label><input type="radio" name="mode" value="chain" checked> Chain (fallback)</label>
+    <label><input type="radio" name="mode" value="channel"> Specific channel</label>
+    <select name="channel">
+      <option value="">Select channel</option>
+      <option value="email">email</option>
+      <option value="sms">sms</option>
+      <option value="telegram">telegram</option>
+    </select>
+  </fieldset>
+  <button type="submit">Send</button>
+</form>
+{% endif %}
+{% endblock %}

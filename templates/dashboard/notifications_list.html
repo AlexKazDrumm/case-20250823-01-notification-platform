@@ -1,0 +1,33 @@
+{% extends "dashboard/base.html" %}
+{% block content %}
+<h2>Notifications</h2>
+<table role="grid">
+  <thead><tr><th>ID</th><th>Subject</th><th>To</th><th>Channels</th><th>Status</th><th>Created</th><th></th></tr></thead>
+  <tbody>
+  {% for n in page %}
+    <tr>
+      <td>{{ n.id }}</td>
+      <td>{{ n.subject|default:"—" }}</td>
+      <td>
+        {% if n.to_email %}📧 {{ n.to_email }}<br>{% endif %}
+        {% if n.to_phone %}📱 {{ n.to_phone }}<br>{% endif %}
+        {% if n.to_telegram %}<i class="bi bi-telegram"></i> {{ n.to_telegram }}{% endif %}
+      </td>
+      <td>{{ n.channels_order|join:", " }}</td>
+      <td><span class="badge {{ n.status }}">{{ n.status }}</span></td>
+      <td>{{ n.created_at }}</td>
+      <td><a href="{% url 'dashboard:notification_detail' n.id %}">Open</a></td>
+    </tr>
+  {% empty %}
+    <tr><td colspan="7">Пока пусто</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+<nav>
+  <ul>
+    {% if page.has_previous %}<li><a href="?page={{ page.previous_page_number }}">Назад</a></li>{% endif %}
+    <li>Стр. {{ page.number }} из {{ page.paginator.num_pages }}</li>
+    {% if page.has_next %}<li><a href="?page={{ page.next_page_number }}">Вперёд</a></li>{% endif %}
+  </ul>
+</nav>
+{% endblock %}
